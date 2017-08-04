@@ -1,0 +1,26 @@
+import { combineReducers } from 'redux';
+
+export default class Registry {
+  constructor(baseReducers) {
+    this._reducers = baseReducers;
+  }
+
+  store = null;
+
+  //this method merges the new reducers with current reducers
+  injectReducers(reducers) {
+    Object.assign(
+      this._reducers,
+      reducers.reduce((acc, reducer) => {
+        acc[reducer.reducer] = reducer;
+        return acc;
+      }, {})
+    );
+
+    this.store.replaceReducer(combineReducers(this._reducers));
+  }
+
+  get initialReducers() {
+    return combineReducers(this._reducers);
+  }
+}
